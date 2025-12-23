@@ -1,95 +1,101 @@
-#include <iostream>
 #include "ecole.h"
-using namespace std;
+#include <cstring>
 
-class ecole{
-    public:
-        char *nom = NULL;
-        char *adress = NULL;
-        int ne = 0;
-        int *eleve = NULL;
-        bool check_eleve(int eleve){
-            for (int i = 0; i < 5; i++)
-            {
-                if ((eleve+i)<0)
-                {
-                    return false;
-                }
-            }
-            return true;
-            
-        }
-        ecole(char *_nom, char *_adress, int _ne, int *_eleve){
-            this->nom = _nom;
-            this->adress = _adress;
-            if (_ne<0 || !check_eleve(*eleve))
-            {
-                cout <<"NE<0 || ELEVE<0" << endl;
-            }
-            
-            this->ne = _ne;
-            this->eleve = _eleve;
-        };
-        ecole(const ecole *e){
-            this->nom = e->nom;
-            this->adress = e->adress;
-            this->ne = e->ne;
-            this->eleve = e->eleve;
-        };
-        ~ecole(){
-            delete [] eleve;
-        };
+// Constructor
+ecole::ecole(char* n, char* a, int ne, int* e) {
+    if (ne < 0) throw "Nombre d'enseignants invalide";
 
-        char get_nom(){
-            char full_name[15];
-            int c = 0;
-            while ((nom+c)!=NULL)
-            {
-                full_name[c] = *(nom+c);
-                c++;
-            }
+    this->ne = ne;
 
-            return full_name[15];
-        }
+    // nom
+    if (n) {
+        nom = new char[strlen(n) + 1];
+        strcpy(nom, n);
+    } else nom = NULL;
 
-        int get_eleve_niveau(int niveau){
-            return (eleve[niveau]);
-        }
+    // adresse
+    if (a) {
+        adresse = new char[strlen(a) + 1];
+        strcpy(adresse, a);
+    } else adresse = NULL;
 
-        ecole operator ++(){
-            this->ne += 1;
-        }
+    // eleve
+    eleve = new int[6];
+    for (int i = 0; i < 6; i++) {
+        if (e && e[i] < 0) throw "Nombre d'élèves invalide";
+        eleve[i] = (e ? e[i] : 0);
+    }
+}
 
-        ecole operator +(ecole e){
-            char new_name[15];
-            char new_adr[15];
+// Copy constructor (VERY IMPORTANT)
+ecole::ecole(const ecole& other) {
+    ne = other.ne;
 
-            cout << "enter new_name : ";
-            cin >> new_name;
+    nom = other.nom ? new char[strlen(other.nom) + 1] : NULL;
+    if (nom) strcpy(nom, other.nom);
 
-            cout << "enter new_adr : ";
-            cin >> new_adr;
+    adresse = other.adresse ? new char[strlen(other.adresse) + 1] : NULL;
+    if (adresse) strcpy(adresse, other.adresse);
 
-            this->nom = new_name;
-            this->adress = new_adr;
-            this->ne += e.ne;
-            for (int i = 0; i < 5; i++)
-            {
-                this->eleve[i] += e.eleve[i];
-            }
-        }
+    eleve = new int[6];
+    for (int i = 0; i < 6; i++)
+        eleve[i] = other.eleve[i];
+}
 
-        ecole operator *() {
-            char str[100];
-            sprintf(str,"nom:%s adr:%s ne:%d, ",get_nom(),this->adress,this->ne);
-            for (int i = 0; i < 5; i++)
-            {
-                sprintf(str,"eleve[%d]:%d",i,eleve[i]);
-            }
-        }
+// Destructor
+ecole::~ecole() {
+    delete[] nom;
+    delete[] adresse;
+    delete[] eleve;
+}
 
-        void view(){
-            printf(ecole::operator*);
-        }
-    };
+// Getters
+char* ecole::get_nom() const {
+    return nom;
+}
 
+int ecole::get_eleve_niveau(int niveau) const {
+    if (niveau < 1 || niveau > 6) throw "Niveau invalide";
+    return eleve[niveau - 1];
+}
+
+// ++ operator
+ecole& ecole::operator++() {
+    ne++;
+    return *this;
+}
+
+// + operator (fusion)
+ecole ecole::operator+(const ecole& e) {
+    char nomTmp[100], adrTmp[100];
+    cout << "Nom de la nouvelle école: ";
+    cin >> nomTmp;
+    cout << "Adresse de la nouvelle école: ";
+    cin >> adrTmp;
+
+    int tab[6];
+    for (int i = 0; i < 6; i++)
+        tab[i] = eleve[i] + e.eleve[i];
+
+    return ecole(nomTmp, adrTmp, ne + e.ne, tab);
+}
+
+// char* conversion
+ecole::operator char*() const {
+    char buffer[300];
+    sprintf(buffer, "Ecole %s, Adresse %s, Enseignants %d",
+            nom, adresse, ne);
+
+    char* res = new char[strlen(buffer) + 1];
+    strcpy(res, buffer);
+    return res;
+}
+
+// view()
+void ecole::view() const {
+    cout << "Nom: " << nom << endl;
+    cout << "Adresse: " << adresse << endl;
+    cout << "Enseignants: " << ne << endl;
+    for (int i = 0; i < 6; i++)
+        cout << "Niveau " << i + 1 << ": " << eleve[i] << " élèves" << endl;
+}

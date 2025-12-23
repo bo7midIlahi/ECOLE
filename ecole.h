@@ -1,27 +1,35 @@
+#ifndef ECOLE_H
+#define ECOLE_H
+
 #include <iostream>
 using namespace std;
 
-class ecole{
-    public:
-        char *nom = NULL;
-        char *adress = NULL;
-        int ne = 0;
-        int *eleve = NULL;
-        bool check_eleve(int eleve){}
-        ecole(char *_nom, char *_adress, int _ne, int *_eleve){};
-        ecole(const ecole *e){};
-        ~ecole(){};
+class ecole {
+protected:
+    char* nom;
+    char* adresse;
+    int ne;
+    int* eleve; // size 6
 
-        char get_nom(){}
+public:
+    // Constructors
+    ecole(char* n = NULL, char* a = NULL, int ne = 0, int* e = NULL);
+    ecole(const ecole& other);
 
-        int get_eleve_niveau(int niveau){}
+    // Destructor
+    virtual ~ecole();
 
-        ecole operator ++(){}
+    // Getters
+    char* get_nom() const;
+    int get_eleve_niveau(int niveau) const;
 
-        ecole operator +(ecole e){}
+    // Operators
+    ecole& operator++();              // ++ecole
+    ecole operator+(const ecole& e);  // fusion
+    operator char*() const;           // conversion
 
-        ecole operator *() {}
+    // Polymorphism
+    virtual void view() const;
+};
 
-        void view(){}
-    };
-
+#endif
