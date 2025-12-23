@@ -14,7 +14,7 @@ public:
     ~ecole_privee();
 
     operator char*() const;
-    void view() const override;
+    void view() const;
 };
 
 #endif

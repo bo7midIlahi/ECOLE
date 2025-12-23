@@ -1,25 +1,25 @@
 #include "ecole.h"
 #include <cstring>
 
-// Constructor
+
 ecole::ecole(char* n, char* a, int ne, int* e) {
     if (ne < 0) throw "Nombre d'enseignants invalide";
 
     this->ne = ne;
 
-    // nom
+
     if (n) {
         nom = new char[strlen(n) + 1];
         strcpy(nom, n);
     } else nom = NULL;
 
-    // adresse
+
     if (a) {
         adresse = new char[strlen(a) + 1];
         strcpy(adresse, a);
     } else adresse = NULL;
 
-    // eleve
+
     eleve = new int[6];
     for (int i = 0; i < 6; i++) {
         if (e && e[i] < 0) throw "Nombre d'élèves invalide";
@@ -27,7 +27,7 @@ ecole::ecole(char* n, char* a, int ne, int* e) {
     }
 }
 
-// Copy constructor (VERY IMPORTANT)
+
 ecole::ecole(const ecole& other) {
     ne = other.ne;
 
@@ -42,14 +42,14 @@ ecole::ecole(const ecole& other) {
         eleve[i] = other.eleve[i];
 }
 
-// Destructor
+
 ecole::~ecole() {
     delete[] nom;
     delete[] adresse;
     delete[] eleve;
 }
 
-// Getters
+
 char* ecole::get_nom() const {
     return nom;
 }
@@ -59,13 +59,13 @@ int ecole::get_eleve_niveau(int niveau) const {
     return eleve[niveau - 1];
 }
 
-// ++ operator
+
 ecole& ecole::operator++() {
     ne++;
     return *this;
 }
 
-// + operator (fusion)
+
 ecole ecole::operator+(const ecole& e) {
     char nomTmp[100], adrTmp[100];
     cout << "Nom de la nouvelle école: ";
@@ -80,7 +80,7 @@ ecole ecole::operator+(const ecole& e) {
     return ecole(nomTmp, adrTmp, ne + e.ne, tab);
 }
 
-// char* conversion
+
 ecole::operator char*() const {
     char buffer[300];
     sprintf(buffer, "Ecole %s, Adresse %s, Enseignants %d",
@@ -91,7 +91,7 @@ ecole::operator char*() const {
     return res;
 }
 
-// view()
+
 void ecole::view() const {
     cout << "Nom: " << nom << endl;
     cout << "Adresse: " << adresse << endl;
